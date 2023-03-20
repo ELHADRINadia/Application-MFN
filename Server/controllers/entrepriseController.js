@@ -1,4 +1,4 @@
-//user controller
+//Entreprise controller
 const Entreprise = require('../models/entrepriseModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -8,26 +8,26 @@ const asyncHandler = require('express-async-handler');
 // register entreprise
 const registerEntreprise = asyncHandler(async (req, res) => {
     const
-        { companyName, Founder, email, password, phone, address, ICE } = req.body;
+        { companyName, email, password, phone, latitude, longitude, ICE } = req.body;
     if
         (
         !companyName ||
-        !Founder ||
         !email ||
         !password ||
         !phone ||
-        !address ||
+        !latitude ||
+        !longitude ||
         !ICE
     ) {
         res.status(400);
         throw new Error('Please fill all the fields');
     }
 
-    //check if entreprise already exists
-    const entrepriseExists = await User.findOne({ email });
+    // check if entreprise already exists
+    const entrepriseExists = await Entreprise.findOne({ email });
     if (entrepriseExists) {
         res.status(400);
-        throw new Error('User already exists');
+        throw new Error('entreprise already exists');
     }
 
     //hash password
@@ -37,11 +37,11 @@ const registerEntreprise = asyncHandler(async (req, res) => {
     //create entreprise
     const entreprise = await Entreprise.create({
         companyName,
-        Founder,
         email,
         password: hashedPassword,
         phone,
-        address,
+        latitude,
+        longitude,
         ICE,
     });
 
@@ -49,10 +49,10 @@ const registerEntreprise = asyncHandler(async (req, res) => {
         res.status(201).json({
             _id: entreprise._id,
             companyName: entreprise.companyName,
-            Founder: entreprise.Founder,
             email: entreprise.email,
             phone: entreprise.phone,
-            address: entreprise.address,
+            latitude: entreprise.latitude,
+            longitude: entreprise.longitude,
             ICE: entreprise.ICE,
             token: generateToken(entreprise._id),
             message: "Entreprise created successfully"
@@ -85,10 +85,10 @@ const loginEntreprise = asyncHandler(async (req, res) => {
         res.json({
             _id: entreprise._id,
             companyName: entreprise.companyName,
-            Founder: entreprise.Founder,
             email: entreprise.email,
             phone: entreprise.phone,
-            address: entreprise.address,
+            latitude: entreprise.latitude,
+            longitude: entreprise.longitude,
             ICE: entreprise.ICE,
             token: generateToken(entreprise._id),
             message: "Entreprise logged in successfully"
@@ -102,15 +102,19 @@ const loginEntreprise = asyncHandler(async (req, res) => {
 
 //get entreprise by id
 const getEntrepriseById = asyncHandler(async (req, res) => {
-    res.status(200).json(req.user);
+    res.status(200).json(req.entreprise);
 });
 
 //get all entreprises
 const getAllEntreprises = asyncHandler(async (req, res) => {
-    const Entreprises = await Entreprise.find({});
-    res.status(200).json(entreprises);
-}
-);
+    try {
+      const entreprises = await Entreprise.find({});
+      res.json(entreprises);
+    } catch (error) {
+      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des entreprises" });
+    }
+  });
+  
 
 //generat jwt token
 const generateToken = (id) => {

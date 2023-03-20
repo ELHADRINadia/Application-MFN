@@ -7,10 +7,6 @@ const entrepriseSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        Founder:{
-            type: String,
-            required: true,
-        },
         email:{
             type: String,
             required: true,
@@ -21,19 +17,18 @@ const entrepriseSchema = mongoose.Schema(
             required: true,
         },
         phone:{
-            type: String,
+            type: Number,
             required: true,
         },
-        address:
+        latitude:
             {
-                Latitude :{
-                    type: Number,
-                    required: true,
-                },
-                Longitude:{
-                    type: Number,
-                    required: true,
-                }
+            type: Number,
+            required: true,   
+            },
+        longitude:
+            {
+            type: Number,
+            required: true,
             },
         ICE:{
             type: Number,

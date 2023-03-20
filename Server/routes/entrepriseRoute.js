@@ -5,11 +5,12 @@ const {
     loginEntreprise,
     getEntrepriseById,
     getAllEntreprises,
-} = require('../controller/EntrepriseController');
+} = require('../controllers/entrepriseController');
+
 
 router.post('/register', registerEntreprise);
+router.get('/allentreprises', getAllEntreprises);
 router.post('/login', loginEntreprise);
 router.get('/:id', getEntrepriseById);
-router.get('/allentreprises', getAllEntreprises);
 
 module.exports = router;
